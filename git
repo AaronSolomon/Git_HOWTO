@@ -117,6 +117,12 @@ A: 1. git clone --bare JinYong JinYong.git
    6. git clone sabrina:Waste/JinYong.git JinYong
       so that the remote-tracking is established.
 
+Q: Isn't there a simpler way?
+A: 1. Create a Resposity "Git_HOWTO" on GitHub.
+   2. Make sure your working tree is clean and nothing to commit.
+   3. git remote add origin git@github.com:AaronSolomon/Git_HOWTO.git
+   4. git push --set-upstream origin master
+
 $ Run "ssh-keygen" to generate a pair of keys.
 1. GitHub - (drop-down list) Settings - SSH and GPG keys - New SSH key
    Copy and Paste the contents of id_rsa.pub.
