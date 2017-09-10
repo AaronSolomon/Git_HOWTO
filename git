@@ -1,0 +1,122 @@
+git init
+git add poem.txt
+git status
+git config user.email "solomon@2017.ipv6.club.tw"
+git config user.name  "Solomon"
+git commit -m "message"
+git config --unset user.name
+git config --global user.name "Solomon" # Stored in ~/.gitconfig,
+                                        # applied to all projects.
+Stage: Add a file into the git index.
+Every time yo modify a file, you must "git add" before you commit it.
+git add *
+git add Folder  # every file in this folder
+git add .       # When you want to start managing a project with Git
+                # you often run the following steps:
+                # 1. git init
+                # 2. git status
+                # 3. git add .
+                # 4. git commit -m "Initial app project."
+git add -A .    # Automatically check whether any file is removed,
+                # and update Git index correspondingly.
+At the beginning, every file is untracked.  You should classify them
+into "tracked" (by "git add") or ignored (by ".gitignore").
+vi .gitignore
+   *.txt        # every txt file
+   !note.txt    # except note.txt
+git rm --cached filename        # change the file from "tracked" to "untracked"
+HEAD is a tag which denotes the newest commit.
+Define your own tag: 
+    git tag "tagname"
+    git tag '山居秋暝' fcf9255  # tag an older commitment
+    git checkout '山居秋暝'
+    # 你不會 checkout HEAD, 因為 checkout 後，這時的 HEAD 就指在 山居秋暝
+    git checkout 823603d poem3.txt      # 只抓出 823603d 中的 poem3.txt
+					# This will not change HEAD to 823603d
+    # Checkout 的版本如果和最新 commit 的檔案內容不同，這個取出的檔案內容
+    # 會自動記錄在 Git index 中。之後若執行 git commit, 這個取出的檔案內容
+    # 就會存入repository.
+    # 若要避免這種情況，可以在執行 git checkout 後，立刻執行 git reset HEAD,
+    # 清除 Git index.
+    git tag -l                  # list tag names
+    git tag -d "tagname"
+git show HEAD
+git show filename       該檔案最新版本的修改 (i.e., git show HEAD:filename)
+git show 5f5596a:poem2.txt
+git show '山居秋暝':poem2.txt
+git grep '晚' 823603d   # Search a string in a specific version
+    grep -i java
+    grep -l java
+    grep -c java
+    grep -e java -e python      # Search the occurrence of "java" or "python"
+    grep  -e '將' --and -e '酒' # Occurrence of '將' and '酒' in the same line
+    grep -e str1 --and \(-e str2 -e str3 \)
+git blame 26fd954 pome3.txt     # Who edited which lines?
+    blame -L 5,15 pome3.txt # Who edited line 5-15?
+    blame -L 5, pome3.txt # Who edited line 5-$?
+    blame -L ,15 pome3.txt # Who edited line 1-15?
+git log --oneline       可看到 tagname
+git diff poem3.txt      # Compare the version in git index and working tree
+git diff HEAD HEAD^ poem3.txt # Compare the version in HEAD and its parent
+git diff @ @^ poem3.txt # The notation "@" is the abbreviation of "HEAD"
+git diff @ @~2 poem3.txt # Compare @ and its 2nd-level parent (father of father)
+
+git mv pome3.txt poem3.txt
+# This is equivalent to a combination of the following
+    $ mv pome3.txt poem3.txt
+    $ git rm pome3.txt
+    $ git add poem3.txt
+After you commit your files to the repository, you may "rm *" and try to
+check out to verify that Git has deposited files safely for you.
+Be careful not to remove the ".git" directory, because this is where Git
+stores files.
+
+git shortlog    # Display the number of commitments of each uesr.
+git shortlog -n # sorted descendingly by the number
+        
+git branch "branch_name"	# e.g., "bug/s001/crash_open_file", "feature/multi-selection"
+git checkout "branch_name"	# Creating a branch does not switch to it automatically.  You still stay in the master branch.
+# git checkout -b "branch_name" 2ea5b23 # Create a branch and switch to it.
+# If you checkout a previous commitment, Git may complain that you are in
+# 'detached HEAD' state.  It would worry that you may not be able to access
+# this "unnamed branch".  Therefore, if you plan to revise some files, it is
+# encouraged to specify "-b" to checkout and specify a branch name to it.
+git log  --oneline --all	# disaply all branches
+git log --graph -all
+If the contents of two branches are still the same, you may delete a branch_name
+$ git branch -d "branch_name".
+However, if the contents differ, branches must be merged before you delete one.
+If you decide to discard a branch without merging it,
+$ git branch -D "branch_name".
+To change a branch name, checkout that branch, and then
+git branch -m "new_branch_name"
+
+Create a remote repository
+git init --bare JinYong.git
+# a remote repository must be bare, and the directory name usually has a
+# suffix ".git".
+Clone a remote repository to local
+git clone sabrina:Waste/JinYong.git JinYong
+
+After some local modification and commitment, push the result to remote:
+$ git push 
+Now other people can "git pull" to update their local repository.
+# "git pull" actually perform two tasks: (1) git fetch (2) git merge.
+# If you only perform "git pull", your local repository receives the new
+# commitment, but your working tree (HEAD) is still the old one.
+# You need a fast-forward merge now.
+$ git remote -v # Show the url of remote repository
+
+Q: What should I do if I already have a local repository, and want to
+publish it as a remote depository?
+A: 1. git clone --bare JinYong JinYong.git
+   2. tar -cf - JinYong.git | gzip -9 > JinYong.tgz
+   3. scp JinYong.tgz to a remote server
+   4. On the remote server, gunzip -c JinYong.tgz | tar xvf -
+   5. On your local host, rm JinYong
+   6. git clone sabrina:Waste/JinYong.git JinYong
+      so that the remote-tracking is established.
+
+$ Run "ssh-keygen" to generate a pair of keys.
+1. GitHub - (drop-down list) Settings - SSH and GPG keys - New SSH key
+   Copy and Paste the contents of id_rsa.pub.
